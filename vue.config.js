@@ -12,15 +12,6 @@ module.exports = {
         noInfo: true,
         overlay: true,
         proxy: {
-            '/api': {
-                target: 'http://localhost:8880/',
-                ws: true,
-                changeOrigin: true,
-                pathRewrite: {
-                    '^/api':'/'
-                }
-
-            },
             '/Assets/*': {
                 target: 'http://localhost:8900/',
                 secure: false,
@@ -29,23 +20,13 @@ module.exports = {
             '/AssetType/*': {
                 target: 'http://localhost:8900/',
                 secure: false,
-                changeOrigin: true                
-            },
-            '/Cjd/*': {
-                target: 'http://localhost:8880/',
+                changeOrigin: true 
+            },               
+            '/Pics/*': {
+                target: 'http://localhost:8900/',
                 secure: false,
                 changeOrigin: true
             },
-            '/Flsg/*': {
-                target: 'http://localhost:8880/',
-                secure: false,
-                changeOrigin: true
-            },
-            '/OnlineStatus/*': {
-                target: 'http://localhost:8880/',
-                secure: false,
-                changeOrigin: true
-            }
         }
     },
 

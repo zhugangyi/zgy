@@ -32,6 +32,7 @@ Vue.prototype.Utils = Utils
 Vue.prototype.myutils = myutils
 Vue.prototype.$echarts = echarts
 
+
 var store = new Vuex.Store({
   state: {
     recruitScrollY:0

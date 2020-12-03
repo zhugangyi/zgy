@@ -114,7 +114,7 @@
           width="400"
         ></el-table-column>
         <el-table-column prop="pic" label="图片" align="center" width="55">
-          <template>
+          <template slot-scope="scope">
             <el-button
               plain
               title="查看"
@@ -122,7 +122,7 @@
               icon="el-icon-picture"
               circle
               style="padding: 4px"
-              @click="modifyPictures"
+              @click="modifyPictures(scope.row)"
             ></el-button> </template
         ></el-table-column>
         <el-table-column label="操作" align="center" width="100">
@@ -148,6 +148,8 @@
         v-if="dialogVisible"
         :dialogVisible.sync="dialogVisible"
         :popTitle.sync="popTitle"
+        :belongtotable.sync="belongtotable"
+        :belongtoid.sync="belongtoid"
       />
     </div>
     <div class="mainPage">
@@ -169,7 +171,7 @@ export default {
       value: "",
       assetsTable: [],
       assetType: [],
-      condition: { type: "", name: "", address: "", pageNum: 1, pageSize: 5 },
+      condition: { type: "", name: "", address: "", pageNum: 1, pageSize: 5 }, //查询条件
       dialogVisible: false, //显示对话框
       curPage: 1, //当前页
       total: 0, //总共页数
@@ -179,7 +181,19 @@ export default {
       allpage: 14, //总记录数
       size: 10, //每页显示个数
       current: 1, //当前显示页
-      popTitle:"资产管理",//弹出窗口抬头
+      popTitle: "", //弹出窗口抬头
+      assets: { id: "", name: "" }, //资源
+      imgList: [],
+      imgName: "",
+      fileName: "",
+      belongtotable: "zichan", //传递给图片查看参数
+      belongtoid: "1",         //传递给图片查看参数
+      Pics:{
+        name:"",
+        belongtoid:"",
+        belongtotable:"",
+        imgurl:""
+      }
     };
   },
 
@@ -189,9 +203,32 @@ export default {
   },
 
   methods: {
-    modifyPictures() {
+    // picsDataSubmit() {
+    //   this.Pics.name = this.fileName
+    //   this.Pics.belongtoid = this.assets.id
+    //   this.Pics.belongtotable = "zichan"
+    //   this.Pics.imgurl = this.fileName
+    //   console.log(this.Pics);
+    //   this.$http.post("/Pics/addPicsData/",this.Pics ).then((resp) => {
+    //     console.log("sdfad");
+    //   });
+    // },
+
+    //获取table当前行状态
+    getDetail(row) {
+      this.assets.id = row.id;
+      this.belongtoid =  row.id.toString()
+      this.assets.name = row.name;
+      this.popTitle = "资产管理  "+row.name
+    },
+
+    //点击查看图片
+    modifyPictures(row) {
+      this.getDetail(row);
+      // this.loadPics(this.assets.id);
       this.dialogVisible = true;
     },
+
     getIndex($index) {
       //表格序号
       return (
@@ -220,6 +257,7 @@ export default {
       this.assetsList();
     },
 
+    //获取资产类型
     getAssetType() {
       this.$http.get("/AssetType/AssetTypeList").then((resp) => {
         if (resp) {
