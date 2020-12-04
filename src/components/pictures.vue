@@ -17,23 +17,24 @@
           <el-col :span="6" v-for="(item, index) in imgList" :key="index">
             <div style="padding: 8px">
               <el-card :body-style="{ padding: '15px' }">
-                <viewer :image="imgList">
-                  <img
-                    :src="getImgUrl(item.imgurl)"
-                    style="width: 160px; height: 120px"
-                    alt="图片丢失"
-                  />
-                  <div>
-                    <span>{{ item.imgurl }}</span>
+                <div slot="header" class="clearfix">
+                  <span>{{ item.imgurl }}</span>
                     <el-button
+                      :id="item.id"
                       title="删除"
                       type="danger"
                       icon="el-icon-delete"
                       circle
                       style="padding: 4px; float: right"
-                      @click="deleteImg"
+                      @click="deleteImg($event)"
                     ></el-button>
-                  </div>
+                </div>
+                <viewer :image="imgList">
+                  <img
+                    :src="getImgUrl(item.imgurl)"
+                    style="width: 160px; height: 120px"
+                    :alt="item.imgurl"
+                  />
                 </viewer>
               </el-card>
             </div>
@@ -110,8 +111,15 @@ export default {
     },
   },
   methods: {
-    deleteImg(){
-
+    deleteImg(e){
+      
+      let param = {id:e.currentTarget.id}
+      this.$http.delete("/Pics/deleteImg/",{ params:param}).then((resp)=>{
+        if (resp.data == 1){
+          alert("删除成功")
+        }
+      })
+      this.loadPics()
     },
     handleRemove(file, fileList) {
       console.log(file.name);
@@ -143,6 +151,7 @@ export default {
       this.$http.get("Pics/selectByExample", { params: param }).then((resp) => {
         if (resp) {
           this.imgList = resp.data;
+          console.log(this.imgList)
         }
       });
     },
@@ -179,4 +188,12 @@ export default {
 </script>
 
 <style lang="scss">
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both
+  }
 </style>

@@ -27,6 +27,11 @@ module.exports = {
                 secure: false,
                 changeOrigin: true
             },
+            '/*': {
+                target: 'http://localhost:8900/',
+                secure: false,
+                changeOrigin: true
+            },            
         }
     },
 

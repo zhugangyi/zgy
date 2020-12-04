@@ -54,13 +54,15 @@
     <div style="margin-top: 20px">
       <el-table
         :data="assetsTable"
+        row-key="id"
+        :tree-props="{ children: 'children', hasChildren: 'hasChild' }"
         style="border-radius: 5px"
         :row-style="{ height: '15px' }"
         :cell-style="{ padding: '4px' }"
         border=""
         :header-cell-style="{ 'border-bottom': 'solid 1px #d2d3da' }"
       >
-        <!-- <el-table-column
+        <!-- <el-table-column  //隐藏数据表中的id
           prop="id"
           label="序号"
           align="center"
@@ -71,11 +73,12 @@
             <span v-text="getIndex(scope.$index)"> </span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="name"
-          label="名称"
-          align="center"
-          width="235"
+
+        <!--名称列 根据是否为子资产缩进显示后端排序根据parentId，assetlevel，id -->
+        <el-table-column prop="name" label="名称" width="235">
+          <template slot-scope="scope">
+            <span :style="{marginLeft: scope.row.assetlevel * 23 + 'px'}">{{scope.row.name}}</span>
+            </template
         ></el-table-column>
         <el-table-column
           prop="address"
@@ -126,13 +129,14 @@
             ></el-button> </template
         ></el-table-column>
         <el-table-column label="操作" align="center" width="100">
-          <template>
+          <template slot-scope="scope">
             <el-button
               title="修改"
               type="primary"
               icon="el-icon-edit"
               circle
               style="padding: 4px"
+              @click="modifyAsset(scope.row)"
             ></el-button>
             <el-button
               title="删除"
@@ -140,6 +144,7 @@
               icon="el-icon-delete"
               circle
               style="padding: 4px"
+              @click="deleteAsset(scope.row)"
             ></el-button>
           </template>
         </el-table-column>
@@ -187,13 +192,13 @@ export default {
       imgName: "",
       fileName: "",
       belongtotable: "zichan", //传递给图片查看参数
-      belongtoid: "1",         //传递给图片查看参数
-      Pics:{
-        name:"",
-        belongtoid:"",
-        belongtotable:"",
-        imgurl:""
-      }
+      belongtoid: "1", //传递给图片查看参数
+      Pics: {
+        name: "",
+        belongtoid: "",
+        belongtotable: "",
+        imgurl: "",
+      },
     };
   },
 
@@ -203,29 +208,44 @@ export default {
   },
 
   methods: {
-    // picsDataSubmit() {
-    //   this.Pics.name = this.fileName
-    //   this.Pics.belongtoid = this.assets.id
-    //   this.Pics.belongtotable = "zichan"
-    //   this.Pics.imgurl = this.fileName
-    //   console.log(this.Pics);
-    //   this.$http.post("/Pics/addPicsData/",this.Pics ).then((resp) => {
-    //     console.log("sdfad");
-    //   });
-    // },
+    isChild(row){
+      return row.assettype*30+'px'
+    },
+    modifyAsset(row) {
+      this.getDetail(row);
+    },
+    deleteAsset(row) {
+      this.getDetail(row);
+      if (
+        window.confirm(
+          "确定删除 " + this.assets.name + " 资产数据吗？删除后不可恢复！"
+        )
+      ) {
+        let param = { id: this.assets.id };
+        this.$http
+          .delete("/Assets/deleteAsset", { params: param })
+          .then((resp) => {
+            if (resp.data > 0) {
+              alert("删除成功");
+            }
+          });
+        this.assetsList();
+      } else {
+        return;
+      }
+    },
 
     //获取table当前行状态
     getDetail(row) {
       this.assets.id = row.id;
-      this.belongtoid =  row.id.toString()
+      this.belongtoid = row.id.toString();
       this.assets.name = row.name;
-      this.popTitle = "资产管理  "+row.name
+      this.popTitle = "资产管理  " + row.name;
     },
 
     //点击查看图片
     modifyPictures(row) {
       this.getDetail(row);
-      // this.loadPics(this.assets.id);
       this.dialogVisible = true;
     },
 
@@ -236,8 +256,6 @@ export default {
       );
     },
     assetsList() {
-      // this.condition.pageNum = this.curPage;
-      // this.condition.pageSize = this.pageSize;
       var param = this.condition;
       this.$http
         .get("Assets/selectByExample", { params: param })
