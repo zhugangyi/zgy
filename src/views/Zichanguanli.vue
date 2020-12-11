@@ -77,9 +77,11 @@
         <!--名称列 根据是否为子资产缩进显示后端排序根据parentId，assetlevel，id -->
         <el-table-column prop="name" label="名称" width="235">
           <template slot-scope="scope">
-            <span :style="{marginLeft: scope.row.assetlevel * 23 + 'px'}">{{scope.row.name}}</span>
-            </template
-        ></el-table-column>
+            <span :style="{ marginLeft: scope.row.assetlevel * 23 + 'px' }">{{
+              scope.row.name
+            }}</span>
+          </template></el-table-column
+        >
         <el-table-column
           prop="address"
           label="地址"
@@ -136,7 +138,7 @@
               icon="el-icon-edit"
               circle
               style="padding: 4px"
-              @click="modifyAsset(scope.row)"
+              @click="clickModify(scope.row)"
             ></el-button>
             <el-button
               title="删除"
@@ -172,22 +174,29 @@ import Pictures from "../components/pictures.vue";
 export default {
   data() {
     return {
-      totalPage: 5,
       value: "",
       assetsTable: [],
       assetType: [],
-      condition: { type: "", name: "", address: "", pageNum: 1, pageSize: 5 }, //查询条件
+      condition: { type: "", name: "", address: "", pageNum: 1, pageSize: 10 }, //查询条件
       dialogVisible: false, //显示对话框
       curPage: 1, //当前页
       total: 0, //总共页数
-      pageSize: 5, //每页记录数
-      pageNum: 1, //第一页
-      dataChanged: false,
-      allpage: 14, //总记录数
-      size: 10, //每页显示个数
-      current: 1, //当前显示页
       popTitle: "", //弹出窗口抬头
-      assets: { id: "", name: "" }, //资源
+      assets: {
+        id: "",
+        name: "",
+        address: "",
+        area: "",
+        assettype: "",
+        assetlevel: "",
+        comment: "",
+        coordinate: "",
+        tipname: "",
+        price: 0,
+        proportion: "",
+        assetstatus: "",
+        parentId: 0,
+      }, //资源
       imgList: [],
       imgName: "",
       fileName: "",
@@ -208,8 +217,14 @@ export default {
   },
 
   methods: {
-    isChild(row){
-      return row.assettype*30+'px'
+    clickModify(row) {
+      this.getDetail(row)
+      this.$router.push({path:"/assetEdit",query:this.assets})
+    },
+    clickAdd() {},
+    //子资产 缩进30px
+    isChild(row) {
+      return row.assettype * 30 + "px";
     },
     modifyAsset(row) {
       this.getDetail(row);
@@ -226,10 +241,10 @@ export default {
           .delete("/Assets/deleteAsset", { params: param })
           .then((resp) => {
             if (resp.data > 0) {
-              alert("删除成功");
+              this.$message.success("删除成功");
+              this.assetsList();
             }
           });
-        this.assetsList();
       } else {
         return;
       }
@@ -237,6 +252,7 @@ export default {
 
     //获取table当前行状态
     getDetail(row) {
+      this.assets = row
       this.assets.id = row.id;
       this.belongtoid = row.id.toString();
       this.assets.name = row.name;
@@ -277,7 +293,7 @@ export default {
 
     //获取资产类型
     getAssetType() {
-      this.$http.get("/AssetType/AssetTypeList").then((resp) => {
+      this.$http.get("/AssetType/list").then((resp) => {
         if (resp) {
           this.assetType = resp.data;
         }

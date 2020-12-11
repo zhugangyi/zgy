@@ -27,6 +27,16 @@ module.exports = {
                 secure: false,
                 changeOrigin: true
             },
+            '/Area/*': {
+                target: 'http://localhost:8900/',
+                secure: false,
+                changeOrigin: true
+            },
+            '/Custom/*': {
+                target: 'http://localhost:8900/',
+                secure: false,
+                changeOrigin: true
+            },
             '/*': {
                 target: 'http://localhost:8900/',
                 secure: false,

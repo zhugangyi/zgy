@@ -45,7 +45,7 @@
             </el-table-column>
             <el-table-column
               prop="name"
-              label="资产类型"
+              label="资产状态"
               align="center"
               width="200"
             ></el-table-column>
@@ -99,10 +99,10 @@ export default {
       commandType: "",
       id: 0,
       name: "",
-      addUrl: "/AssetType/insert",
-      modifyUrl: "/AssetType/update",
+      addUrl: "/AssetStatus/insert",
+      modifyUrl: "/AssetStatus/update",
       tableData: [],
-      parentName: "资产类型",
+      parentName: "资产状态",
       needRefresh: true,
       condition:""
     };
@@ -122,7 +122,7 @@ export default {
       this.dialogVisible = true;
     },
     list() {
-      this.$http.get("AssetType/list").then((resp) => {
+      this.$http.get("AssetStatus/list").then((resp) => {
         if (resp) {
           this.tableData = resp.data;
         }
@@ -134,11 +134,11 @@ export default {
     },
     deleteArea(row) {
       this.getDetail(row);
-      if (!window.confirm("确定删除资产类型 " + this.name)) {
+      if (!window.confirm("确定删除资产状态 " + this.name)) {
         return;
       }
       var param = { id: this.id, name: "" };
-      this.$http.delete("AssetType/delete", { params: param }).then((resp) => {
+      this.$http.delete("AssetStatus/delete", { params: param }).then((resp) => {
         if (resp) {
           this.$message.success("删除成功");
           this.list();

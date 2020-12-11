@@ -116,10 +116,11 @@ export default {
       let param = {id:e.currentTarget.id}
       this.$http.delete("/Pics/deleteImg/",{ params:param}).then((resp)=>{
         if (resp.data == 1){
-          alert("删除成功")
+          this.$message.success("删除成功")
+          this.loadPics()
         }
       })
-      this.loadPics()
+      
     },
     handleRemove(file, fileList) {
       console.log(file.name);

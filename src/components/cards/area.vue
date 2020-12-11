@@ -2,19 +2,17 @@
   <div>
     <div>
       <div>
-        <el-button type="success" style="padding: 7px" @click="clickAdd"
+        <el-button type="primary" icon="el-icon-circle-plus" style="padding: 5px" @click="clickAdd"
           >新增</el-button
         >
-        <input
-          placeholder=" 输入查找内容..."
-          style="
-            width: 130px;
-            height: 25px;
-            margin-left: 30px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-          "
-        />
+        <el-input
+          clearable
+          size="mini"
+          placeholder="联系电话"
+          v-model="condition"
+          style="width: 150px; margin-right: 10px;margin-left: 10px;"
+        >
+        </el-input>
         <el-button
           title="查找"
           icon="el-icon-search"
@@ -28,7 +26,7 @@
           style="padding: 4px; margin-left: 10px"
         ></el-button>
       </div>
-      <div style="margin-top:8px">
+      <div style="margin-top: 8px">
         <div>
           <el-table
             :data="areaData"
@@ -39,11 +37,12 @@
             @row-click="getDetail"
           >
             <el-table-column
-              prop="id"
               label="序号"
+              type="index"
+              width="50"
               align="center"
-              width="80"
-            ></el-table-column>
+            >
+            </el-table-column>
             <el-table-column
               prop="name"
               label="区域名称"
@@ -75,56 +74,54 @@
       </div>
     </div>
     <!--//子组件 属性dialogVisible绑定父组件数据dialogVisible（vue是数据驱动）-->
-    <mypopup
-      v-on:recieveData="recieveData"
+    <Mypopup
       v-if="dialogVisible"
       :dialogVisible.sync="dialogVisible"
-      :popTitle.sync="popTitle"
-      :popItems.sync="popItems"
       :commandType.sync="commandType"
-    ></mypopup>
+      :id.sync="id"
+      :name.sync="name"
+      :addUrl.sync="addUrl"
+      :modifyUrl.sync="modifyUrl"
+      :parentName.sync="parentName"
+    ></Mypopup>
   </div>
 </template>
 
 <script>
-import mypopup from "../dialog/mypopup";
+import Mypopup from "../dialog/mypopup";
 export default {
   data() {
     return {
-      currentrow: [],
-      area: { areaId: "", areaName: "" },
-      areaData: [],
       dialogVisible: false,
       popTitle: "",
       popItems: "",
       returnData: "",
       commandType: "",
+      id: 0,
+      name: "",
+      addUrl: "/Area/insert",
+      modifyUrl: "/Area/update",
+      areaData: [],
+      parentName: "地区",
+      needRefresh: true,
+      condition:""
     };
   },
   components: {
-    mypopup,
+    Mypopup,
   },
   methods: {
-    recieveData(curreturnData) {
-      this.returnData = curreturnData;
-      this.area.areaName = this.returnData;
-    },
-
     clickModify(row) {
       this.getDetail(row);
-      this.popTitle = "地区编辑";
       this.commandType = "modify";
-      this.popItems=this.area.areaName;
       this.dialogVisible = true;
     },
     clickAdd() {
-      this.popTitle = "地区新增";
+      this.name = "";
       this.commandType = "add";
-      this.popItems = [];
       this.dialogVisible = true;
     },
-    listArea() {
-      var param = []
+    list() {
       this.$http.get("Area/list").then((resp) => {
         if (resp) {
           this.areaData = resp.data;
@@ -132,44 +129,28 @@ export default {
       });
     },
     getDetail(row) {
-      this.area.areaId = row.areaId;
-      this.area.areaName = row.areaName;
+      this.id = row.id;
+      this.name = row.name;
     },
     deleteArea(row) {
       this.getDetail(row);
-      if (!window.confirm("确定删除地区 " + this.area.areaName)) {
+      if (!window.confirm("确定删除地区 " + this.name)) {
         return;
       }
-      var param = { areaId: this.area.areaId, areaName: "" };
-      this.$http.delete("Area/delete", { data: param }).then((resp) => {
+      var param = { id: this.id, name: "" };
+      this.$http.delete("Area/delete", { params: param }).then((resp) => {
         if (resp) {
-          alert("删除成功");
-          this.listArea();
+          this.$message.success("删除成功");
+          this.list();
         } else {
-          alert("删除失败");
-        }
-      });
-    },
-
-    modify() {
-      this.$http.put("Area/update", this.area).then((resp) => {
-        if (resp) {
-          alert("修改成功");
-          this.listArea();
-        }
-      });
-    },
-    insert() {
-      this.$http.post("Area/insert", this.area).then((resp) => {
-        if (resp) {
-          alert("新增成功");
-          this.listArea();
+          this.$message.error("删除失败");
         }
       });
     },
   },
+
   mounted() {
-    this.listArea();
+    this.list();
   },
 };
 </script>

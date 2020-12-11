@@ -43,12 +43,12 @@ export default {
     display: {
       type: Array,
       default() {
-        return [5, 10, 20, 50];
+        return [10, 20, 30, 50];
       },
     },
     pagegroup: {
       type: Number,
-      default: 5,
+      default: 10,
     },
 
     curPage: {
@@ -61,8 +61,8 @@ export default {
       current: 1,
       currentSize: this.display[0],
       jumpDefault: 1,
-      selectedPageSize: 5,
-      pageInfo:{pageSize:5,pageNum:1}
+      selectedPageSize: 10,
+      pageInfo:{pageSize:10,pageNum:1}
     };
   },
 
