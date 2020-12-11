@@ -115,6 +115,7 @@ export default {
       area:[]
     };
   },
+  //提交测试 2012-12-11
   methods: {
     reset() {
       this.assets = {
