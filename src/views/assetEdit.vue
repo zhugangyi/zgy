@@ -93,6 +93,7 @@
 
 <script>
 export default {
+  
   data() {
     return {
       assets: {
@@ -144,6 +145,7 @@ export default {
             this.$message.success("修改成功");
           }
         });
+        console.log("github提交测试2020-12011")
       }
       if (this.assets.id == null) {
         console.log("新增");
