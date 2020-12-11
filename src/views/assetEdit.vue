@@ -170,14 +170,8 @@ export default {
               this.area = resp.data
           }
       })
-      console.log(this.assetType)
-      console.log(this.assetstatus)
-      console.log(this.area)
     },
   },
-  // mounted(){
-  //   this.getParams()
-  // },
   created() {
     this.getParams();
   },
