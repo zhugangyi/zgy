@@ -44,12 +44,21 @@
       </el-col>
     </el-row>
     <div>
-      <el-button type="primary" icon="el-icon-circle-plus" style="padding: 5px">
+      <el-button
+        type="primary"
+        icon="el-icon-circle-plus"
+        style="padding: 5px"
+        @click="clickAdd"
+      >
         新增
       </el-button>
-      <el-button type="warning" icon="el-icon-share" style="padding: 5px"
+      <!-- <el-button
+        type="warning"
+        icon="el-icon-share"
+        style="padding: 5px"
+        @click="clickSplit"
         >资产拆分</el-button
-      >
+      > -->
     </div>
     <div style="margin-top: 20px">
       <el-table
@@ -130,7 +139,7 @@
               @click="modifyPictures(scope.row)"
             ></el-button> </template
         ></el-table-column>
-        <el-table-column label="操作" align="center" width="100">
+        <el-table-column label="操作" align="center" width="150">
           <template slot-scope="scope">
             <el-button
               title="修改"
@@ -147,6 +156,15 @@
               circle
               style="padding: 4px"
               @click="deleteAsset(scope.row)"
+            ></el-button>
+            <el-button
+              v-if="!scope.row.assetlevel"
+              title="资产拆分"
+              type="warning"
+              icon="el-icon-share"
+              circle
+              style="padding: 4px"
+              @click="clickSplit(scope.row)"
             ></el-button>
           </template>
         </el-table-column>
@@ -217,12 +235,43 @@ export default {
   },
 
   methods: {
-    clickModify(row) {
-      this.getDetail(row)
-      this.$router.push({path:"/assetEdit",query:this.assets})
+    reset() {
+      this.assets = {
+        id: null,
+        name: "",
+        address: "",
+        area: "",
+        assettype: "",
+        assetlevel: 0,
+        comment: "",
+        coordinate: "",
+        tipname: "",
+        price: 0,
+        proportion: 0,
+        assetstatus: "",
+        parentId: 0,
+      };
     },
-    clickAdd() {},
+    clickModify(row) {
+      this.getDetail(row);
+      this.$router.push({ path: "/assetEdit", query: this.assets });
+    },
+    clickAdd() {
+      this.reset();
+      this.$router.push({ path: "/assetEdit", query: this.assets });
+    },
     //子资产 缩进30px
+    clickSplit(row) {
+      // this.getDetail(row)
+      let tempParentId=row.id
+      let tempArea=row.area
+      this.reset();
+      this.assets.parentId=tempParentId
+      this.assets.area=tempArea
+      this.assets.assetlevel = 1;
+      console.log(this.assets)
+      this.$router.push({ path: "/assetEdit", query: this.assets });
+    },
     isChild(row) {
       return row.assettype * 30 + "px";
     },
@@ -252,7 +301,7 @@ export default {
 
     //获取table当前行状态
     getDetail(row) {
-      this.assets = row
+      this.assets = row;
       this.assets.id = row.id;
       this.belongtoid = row.id.toString();
       this.assets.name = row.name;
@@ -304,6 +353,11 @@ export default {
   mounted() {
     this.getAssetType();
     this.assetsList();
+  },
+  watch: {
+    $route(to, from) {
+      this.assetsList();
+    },
   },
 };
 </script>

@@ -15,7 +15,7 @@ import Area from '@/components/cards/area'
 import AssetType from '@/components/cards/type'
 import AssetStatus from '@/components/cards/assetStatus'
 import Custom from '@/components/cards/custom'
-import AssetEdit from '@/views/assetEdit'
+import AssetEdit from '@/components/cards/assetEdit'
 
 Vue.use(Router)
 
@@ -140,8 +140,7 @@ const router = new Router({
                     path: '/assetEdit',
                     component: AssetEdit,
                     name: '资源编辑',
-                    meta: {keepAlive: true},
-                    props:true
+                    meta: {keepAlive: true}
                 },
                 {
                     path: '/about',

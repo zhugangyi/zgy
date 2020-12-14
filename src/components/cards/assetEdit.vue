@@ -17,7 +17,7 @@
           @click="clickReturn"
           >返回</el-button
         >
-        <label style="margin-left: 100px">客户资料编辑</label>
+        <label style="margin-left: 100px">资产资料编辑</label>
       </div>
       <div style="margin-top: 20px">
         <div style="margin-top: 20px; margin-left: 10px">
@@ -37,14 +37,27 @@
           ></el-input>
         </div>
         <div style="margin-top: 10px; margin-left: 10px">
+          <label style="font-size: 15px">资产地址</label>
+          <el-input
+            v-model="assets.address"
+            class="edit"
+            style="width: 500px"
+            size="medium"
+          ></el-input>
+        </div>
+        <div style="margin-top: 10px; margin-left: 10px">
           <label style="font-size: 15px">区域名称</label>
           <el-select
             v-model="assets.area"
             style="width: 200px; margin-left: 8px"
             placeholder="选择地区"
           >
-            <el-option v-for="(item,index) in area" :key="index" :label="item.name" :value="item.name">
-              
+            <el-option
+              v-for="(item, index) in area"
+              :key="index"
+              :label="item.name"
+              :value="item.name"
+            >
             </el-option>
           </el-select>
           <!-- <el-input
@@ -57,33 +70,75 @@
           <el-input
             v-model="assets.proportion"
             class="edit"
-            style="width: 280px"
+            style="width: 270px; margin-left: 4px"
             size="medium"
           ></el-input>
         </div>
         <div style="margin-top: 10px; margin-left: 10px">
           <label style="font-size: 15px">资产状态</label>
-          <el-input
+          <el-select
+            v-model="assets.assetstatus"
+            style="width: 200px; margin-left: 8px"
+            placeholder="选择资产状态"
+          >
+            <el-option
+              v-for="(item, index) in assetstatus"
+              :key="index"
+              :label="item.name"
+              :value="item.name"
+            >
+            </el-option>
+          </el-select>
+          <!-- <el-input
             v-model="assets.assetstatus"
             class="edit"
             style="width: 200px"
             size="medium"
-          ></el-input>
+          ></el-input> -->
           <label style="font-size: 15px">资产类型</label>
-          <el-input
+          <el-select
+            v-model="assets.assettype"
+            style="width: 270px; margin-left: 8px"
+            placeholder="选择资产类型"
+          >
+            <el-option
+              v-for="(item, index) in assetType"
+              :key="index"
+              :label="item.name"
+              :value="item.name"
+            >
+            </el-option>
+          </el-select>
+          <!-- <el-input
             v-model="assets.assetType"
             class="edit"
             style="width: 280px"
             size="medium"
-          ></el-input>
-          <div>
+          ></el-input> -->
+          <div style="margin-top: 10px">
             <label style="font-size: 15px">详细资料</label>
             <el-input
               v-model="assets.comment"
               class="edit"
-              style="width: 280px"
+              style="width: 540px"
               size="medium"
             ></el-input>
+          </div>
+          <div style="margin-top: 10px" v-if="assets.assetlevel">
+            <label style="font-size: 15px">所属父资产</label>
+            <el-select
+              v-model="assets.parentid"
+              style="width: 270px; margin-left: 8px"
+              placeholder="选择父资产名称"
+            >
+              <el-option
+                v-for="(item, index) in parentAssets"
+                :key="index"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
           </div>
         </div>
       </div>
@@ -93,7 +148,6 @@
 
 <script>
 export default {
-  
   data() {
     return {
       assets: {
@@ -109,31 +163,38 @@ export default {
         price: 0,
         proportion: "",
         assetstatus: "",
-        parentId: 0,
+        parentid: 0,
       },
-      assetType:[],
-      assetstatus:[],
-      area:[]
+      assetType: [],
+      assetstatus: [],
+      area: [],
+      parentAssets: [],
     };
   },
   //提交测试 2012-12-11
   methods: {
     reset() {
+      var tempLevel = this.assets.assetlevel
+      var temparea = this.assets.area
+      var tempparentId = this.assets.parentId
+      var tempAssetType = this.assets.assettype
+      var tempAssetStatus = this.assets.assetstatus
       this.assets = {
-        id: "",
+        id: null,
         name: "",
         address: "",
-        area: "",
+        area: temparea,
         assettype: "",
-        assetlevel: "",
+        assetlevel: tempLevel,
         comment: "",
         coordinate: "",
         tipname: "",
         price: 0,
         proportion: "",
         assetstatus: "",
-        parentId: 0,
+        parentid: tempparentId,
       };
+      
     },
     clickReturn() {
       this.$router.replace({ path: "/zichanguanli" });
@@ -145,38 +206,51 @@ export default {
             this.$message.success("修改成功");
           }
         });
-        console.log("github提交测试2020-12011")
       }
       if (this.assets.id == null) {
-        console.log("新增");
+        console.log(this.assets)
         this.$http.post("Assets/insert", this.assets).then((resp) => {
           if (resp) {
             this.$message.success("新增成功");
+            // var tempLevel = this.assets.assetlevel
+            this.reset()
+            // this.assets.assetlevel = tempLevel
           }
         });
       }
     },
     getParams() {
       this.assets = this.$route.query;
-      this.$http.get("/AssetType/list").then((resp)=>{
-          if(resp){
-              this.assetType = resp.data
-          }
-      })
-      this.$http.get("/AssetStatus/list").then((resp)=>{
-          if(resp){
-              this.assetstatus = resp.data
-          }
-      })
-      this.$http.get("/Area/list").then((resp)=>{
-          if(resp){
-              this.area = resp.data
-          }
-      })
+      console.log(this.assets);
+      this.$http.get("/AssetType/list").then((resp) => {
+        if (resp) {
+          this.assetType = resp.data;
+        }
+      });
+      this.$http.get("/AssetStatus/list").then((resp) => {
+        if (resp) {
+          this.assetstatus = resp.data;
+        }
+      });
+      this.$http.get("/Area/list").then((resp) => {
+        if (resp) {
+          this.area = resp.data;
+        }
+      });
+      this.$http.get("/Assets/parentAssetList").then((resp) => {
+        if (resp) {
+          this.parentAssets = resp.data;
+        }
+      });
     },
   },
   created() {
     this.getParams();
+  },
+  watch: {
+    $route(to, from) {
+      this.getParams();
+    },
   },
 };
 </script>
