@@ -139,7 +139,7 @@
               @click="modifyPictures(scope.row)"
             ></el-button> </template
         ></el-table-column>
-        <el-table-column label="操作" align="center" width="150">
+        <el-table-column label="操作" align="left" width="150">
           <template slot-scope="scope">
             <el-button
               title="修改"
@@ -213,7 +213,7 @@ export default {
         price: 0,
         proportion: "",
         assetstatus: "",
-        parentId: 0,
+        parentid: 0,
       }, //资源
       imgList: [],
       imgName: "",
@@ -249,7 +249,7 @@ export default {
         price: 0,
         proportion: 0,
         assetstatus: "",
-        parentId: 0,
+        parentid: 0,
       };
     },
     clickModify(row) {
@@ -266,7 +266,7 @@ export default {
       let tempParentId=row.id
       let tempArea=row.area
       this.reset();
-      this.assets.parentId=tempParentId
+      this.assets.parentid=tempParentId
       this.assets.area=tempArea
       this.assets.assetlevel = 1;
       console.log(this.assets)

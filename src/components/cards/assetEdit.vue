@@ -41,7 +41,14 @@
           <el-input
             v-model="assets.address"
             class="edit"
-            style="width: 500px"
+            style="width: 350px"
+            size="medium"
+          ></el-input>
+          <label style="font-size: 15px">资产坐标</label>
+          <el-input
+            v-model="assets.coordinate"
+            class="edit"
+            style="width: 120px"
             size="medium"
           ></el-input>
         </div>
@@ -174,11 +181,11 @@ export default {
   //提交测试 2012-12-11
   methods: {
     reset() {
-      var tempLevel = this.assets.assetlevel
-      var temparea = this.assets.area
-      var tempparentId = this.assets.parentId
-      var tempAssetType = this.assets.assettype
-      var tempAssetStatus = this.assets.assetstatus
+      var tempLevel = this.assets.assetlevel;
+      var temparea = this.assets.area;
+      var tempparentId = this.assets.parentid;
+      var tempAssetType = this.assets.assettype;
+      var tempAssetStatus = this.assets.assetstatus;
       this.assets = {
         id: null,
         name: "",
@@ -194,7 +201,6 @@ export default {
         assetstatus: "",
         parentid: tempparentId,
       };
-      
     },
     clickReturn() {
       this.$router.replace({ path: "/zichanguanli" });
@@ -208,12 +214,13 @@ export default {
         });
       }
       if (this.assets.id == null) {
-        console.log(this.assets)
+        console.log(this.assets);
         this.$http.post("Assets/insert", this.assets).then((resp) => {
           if (resp) {
+            console.log(resp.data);
             this.$message.success("新增成功");
             // var tempLevel = this.assets.assetlevel
-            this.reset()
+            this.reset();
             // this.assets.assetlevel = tempLevel
           }
         });
