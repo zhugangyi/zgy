@@ -42,6 +42,7 @@
         </el-row>
       </div>
       <div>
+        <el-button @click="uploadToDatabase">上传</el-button>
         <el-upload
           ref="imgUpload"
           :on-success="addPicsData"
@@ -50,6 +51,7 @@
           :file-list="fileList"
           :action="uploadUrl"
           :auto-upload="false"
+
           multiple
         >
           <!-- // :on-preview="handlePreview"         :after-upload="selectPics" -->
@@ -83,6 +85,7 @@ export default {
       curreturnData: {},
       uploadUrl: "/Pics/uploadPics/",
       fileList: [],
+      logo:'',
       imgList: [],
       Pics: {
         name: "",
@@ -111,6 +114,12 @@ export default {
     },
   },
   methods: {
+
+     fileChange(file){
+      this.$refs.imgUpload.clearFiles() //清除文件对象
+      this.logo = file.raw // 取出上传文件的对象，在其它地方也可以使用
+      this.fileList = [{name: file.name, url: file.url}] // 重新手动赋值filstList， 免得自定义上传成功了, 而fileList并没有动态改变， 这样每次都是上传一个对象
+    },
     deleteImg(e){
       
       let param = {id:e.currentTarget.id}
